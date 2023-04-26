@@ -120,6 +120,10 @@ def about():
 	return render_template('credits.html',t=title,h=heading)
 
 
+@app.route('/health')
+def health_check():
+    return "OK", 200
+
 if __name__ == "__main__":
     env = os.environ.get('FLASK_ENV', 'development')
     port = int(os.environ.get('PORT', 5000))
