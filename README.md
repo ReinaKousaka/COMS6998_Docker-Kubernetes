@@ -2,8 +2,8 @@
 
 ### Overview
 
-This is the Assignment 3 for course COMS6998: Cloud Computing and Big Data at Columbia University.
-The task is to deploy a web application on Kubernetes using Docker containers.
+This is the Assignment 3 for course COMS6998: Cloud Computing and Big Data at Columbia University.  <br>
+The task is to deploy a web application on Kubernetes using Docker containers. Details can be found in this [PDF](/Assignment%203.pdf)
 
 ### Workflow
 
