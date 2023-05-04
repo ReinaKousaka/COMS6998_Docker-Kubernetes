@@ -22,7 +22,7 @@ minikube service flask-app-service --url
 
 # Part 5
 kubectl get pods
-kubectl delete pod <pod-name>
+kubectl delete pod ${podName}
 # should genereate a new pod
 kubectl get pods
 
@@ -45,8 +45,19 @@ kubectl create -f AlertManagerConfigmap.yaml
 kubectl create -f AlertTemplateConfigMap.yaml
 kubectl create -f Deployment.yaml
 kubectl create -f Service.yaml
+kubectl create -f cpu_stress.yaml
+kubectl create -f config-map.yaml
 
+# test alert manager
+kubectl get pods -n monitoring -l app=prometheus-server -o name | xargs kubectl delete -n monitoring
 minikube service alertmanager --url -n monitoring
+
+# go to the prometheus dashboard
+kubectl -n monitoring port-forward svc/prometheus-service 1234:1234
+
+# Part 4
+aws eks update-kubeconfig --region us-east-2 --name ${ClusterName}
+kubectl get svc flask-app-service
 ```
 
 Some other helpful commands
@@ -59,6 +70,13 @@ docker volume prune -f
 
 kubectl get services
 minikube dashboard
+
+# display current context
+kubectl config current-context
+# switch kubectl context
+kubectl config use-context ${contextName}
+# list services
+kubectl get svc
 ```
 
 ### Team Members
