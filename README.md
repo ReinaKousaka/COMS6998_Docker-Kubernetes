@@ -31,22 +31,22 @@ kubectl get pods
 # reference: https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 kubectl create namespace monitoring
 kubectl create -f clusterRole.yaml
-kubectl create  -f prometheus-deployment.yaml 
+kubectl create -f config-map.yaml
+kubectl create -f prometheus-deployment.yaml
 kubectl get deployments --namespace=monitoring
 kubectl get pods --namespace=monitoring
-kubectl port-forward prometheus-monitoring-3331088907-hm5n1 8080:9090 -n monitoring
+kubectl port-forward ${podName} 8080:9090 -n monitoring
+# Setup Kube state metrics on Kubernetes
 # reference: https://devopscube.com/setup-kube-state-metrics/
 git clone https://github.com/devopscube/kube-state-metrics-configs.git
 kubectl apply -f kube-state-metrics-configs/
 kubectl get deployments kube-state-metrics -n kube-system
+# Setup alert manager on Kubernetes
 # reference: https://devopscube.com/alert-manager-kubernetes-guide/#
 git clone https://github.com/bibinwilson/kubernetes-alert-manager.git
-kubectl create -f AlertManagerConfigmap.yaml
-kubectl create -f AlertTemplateConfigMap.yaml
-kubectl create -f Deployment.yaml
-kubectl create -f Service.yaml
+kubectl apply -f kubernetes-alert-manager/
 kubectl create -f cpu_stress.yaml
-kubectl create -f config-map.yaml
+# kubectl create -f config-map.yaml
 
 # test alert manager
 kubectl get pods -n monitoring -l app=prometheus-server -o name | xargs kubectl delete -n monitoring
