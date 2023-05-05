@@ -3,7 +3,8 @@
 ### Overview
 
 This is the Assignment 3 for course COMS6998: Cloud Computing and Big Data at Columbia University.  <br>
-The task is to deploy a web application on Kubernetes using Docker containers. Details can be found in this [PDF](/Assignment%203.pdf)
+The task is to deploy a web application on Kubernetes using Docker containers. <br>
+Details can be found in this [PDF](/Assignment%203.pdf)
 
 ### Workflow
 
@@ -30,9 +31,9 @@ kubectl get pods
 # Setup Prometheus monitoring on Kubernetes
 # reference: https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 kubectl create namespace monitoring
-kubectl create -f clusterRole.yaml
-kubectl create -f config-map.yaml
-kubectl create -f prometheus-deployment.yaml
+kubectl apply -f clusterRole.yaml
+kubectl apply -f config-map.yaml
+kubectl apply -f prometheus-deployment.yaml
 kubectl get deployments --namespace=monitoring
 kubectl get pods --namespace=monitoring
 kubectl port-forward ${podName} 8080:9090 -n monitoring
@@ -45,8 +46,8 @@ kubectl get deployments kube-state-metrics -n kube-system
 # reference: https://devopscube.com/alert-manager-kubernetes-guide/#
 git clone https://github.com/bibinwilson/kubernetes-alert-manager.git
 kubectl apply -f kubernetes-alert-manager/
-kubectl create -f cpu_stress.yaml
-# kubectl create -f config-map.yaml
+kubectl apply -f cpu_stress.yaml
+# kubectl apply -f config-map.yaml
 
 # test alert manager
 kubectl get pods -n monitoring -l app=prometheus-server -o name | xargs kubectl delete -n monitoring
@@ -56,8 +57,18 @@ minikube service alertmanager --url -n monitoring
 kubectl -n monitoring port-forward svc/prometheus-service 1234:1234
 
 # Part 4
+# may create an EKS cluster using eksctl: https://github.com/weaveworks/eksctl
+eksctl create cluster --name=cs6998 --nodes-min=3 --nodes-max=5
+
 aws eks update-kubeconfig --region us-east-2 --name ${ClusterName}
+kubectl apply -f app-depolyment.yaml
 kubectl get svc flask-app-service
+kubectl port-forward service/flask-app-service 5000:5000
+
+# in case failed to depoly mongo due to aws pv/pvc
+kubectl delete pvc mongo-pvc
+kubectl apply -f pvc.yaml
+kubectl apply -f pv.yaml
 ```
 
 Some other helpful commands
@@ -71,12 +82,16 @@ docker volume prune -f
 kubectl get services
 minikube dashboard
 
+# list all contexts
+kubectl config get-contexts
 # display current context
 kubectl config current-context
 # switch kubectl context
 kubectl config use-context ${contextName}
 # list services
 kubectl get svc
+# access the app
+kubectl port-forward service/<your-service-name> <local-port>:<service-port> --namespace <your-namespace>
 ```
 
 ### Team Members
